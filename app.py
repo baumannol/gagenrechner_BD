@@ -265,14 +265,14 @@ with st.expander("💪 Erfolgsrechnung", expanded=False):
     </div>""", unsafe_allow_html=True)
 
 # ========================
-# — PDF-Export mit Branding & Erfolgsrechnung —
+# 📄 PDF-Export mit Branding & Erfolgsrechnung
 # ========================
 st.header("📄 PDF-Export")
 if st.button("PDF erzeugen"):
     pdf = FPDF()
     pdf.add_page()
 
-    # Kopfzeile
+    # ── Kopfzeile ──
     pdf.set_fill_color(0, 77, 89)        # Petrol
     pdf.rect(0, 0, 210, 12, 'F')
     pdf.set_text_color(255, 255, 255)
@@ -280,13 +280,14 @@ if st.button("PDF erzeugen"):
     pdf.cell(0, 10, "Brass Department Gagenrechner", ln=True, align='C')
     pdf.ln(5)
 
-    # Konzert-Name
+    # ── Konzert-Name ──
+    concert_title = st.session_state.get("current_gig", "Konzert")
     pdf.set_text_color(0, 77, 89)
     pdf.set_font('Arial', 'B', 12)
-    pdf.cell(0, 8, f"Konzert: {st.session_state.current_concert}", ln=True)
+    pdf.cell(0, 8, f"Konzert: {concert_title}", ln=True)
     pdf.ln(3)
 
-    # Musiker
+    # ── Musiker ──
     pdf.set_fill_color(247, 166, 0)      # Orange
     pdf.set_text_color(255, 255, 255)
     pdf.set_font('Arial', 'B', 12)
@@ -297,7 +298,7 @@ if st.button("PDF erzeugen"):
     pdf.cell(0, 6, f"Musiker ({mus_count} Pers.): {mus_sum:.2f} CHF", ln=True)
     pdf.ln(4)
 
-    # Zuschläge
+    # ── Zuschläge ──
     pdf.set_fill_color(253, 241, 231)    # Beige
     pdf.set_text_color(0, 77, 89)
     pdf.set_font('Arial', 'B', 12)
@@ -311,10 +312,11 @@ if st.button("PDF erzeugen"):
     pdf.cell(0, 6, f"Anfahrt/Spesen: {sp:.2f} CHF", ln=True)
     pdf.cell(0, 6, f"Anwesenheit: {anw:.2f} CHF", ln=True)
     pdf.cell(0, 6, f"Sonstiges: {sonst:.2f} CHF", ln=True)
-    pdf.cell(0, 6, f"Kulturrabatt: -{rab_amt:.2f} CHF", ln=True)
+    if rab:
+        pdf.cell(0, 6, f"Kulturrabatt: -{rab_amt:.2f} CHF", ln=True)
     pdf.ln(5)
 
-    # Gagenvorschlag
+    # ── Gagenvorschlag ──
     pdf.set_fill_color(0, 115, 138)      # Dunkler Petrol
     pdf.set_text_color(255, 255, 255)
     pdf.set_font('Arial', 'B', 12)
@@ -323,7 +325,7 @@ if st.button("PDF erzeugen"):
     pdf.cell(0, 10, f"{total:.2f} CHF", ln=True, align='C')
     pdf.ln(5)
 
-    # Netto-Erfolgsrechnung der Band
+    # ── Netto-Erfolgsrechnung der Band ──
     pdf.set_fill_color(247, 166, 0)      # Orange
     pdf.set_text_color(255, 255, 255)
     pdf.set_font('Arial', 'B', 12)
@@ -337,15 +339,17 @@ if st.button("PDF erzeugen"):
     pdf.cell(0, 6, f"Lichttechnik: {kosten_licht:.2f} CHF", ln=True)
     pdf.ln(3)
     pdf.set_font('Arial', 'B', 12)
-    pdf.cell(0, 8, f"Netto-Gewinn: {netto_gewinn:.2f} CHF", ln=True)
+    pdf.cell(0, 8, f"Netto-Gewinn: {netto:.2f} CHF", ln=True)
 
-    # Download-Button
-    buf = io.BytesIO()
-    pdf.output(buf)
-    buf.seek(0)
+    # ── In-Memory-Stream & Download ──
+    pdf_buffer = io.BytesIO()
+    pdf_bytes = pdf.output(dest='S').encode('latin1')
+    pdf_buffer.write(pdf_bytes)
+    pdf_buffer.seek(0)
+
     st.download_button(
         label="PDF herunterladen",
-        data=buf,
-        file_name=f"{st.session_state.current_concert.replace(' ', '_')}_Gagenzusammenfassung.pdf",
+        data=pdf_buffer,
+        file_name=f"{concert_title.replace(' ', '_')}_Gagen.pdf",
         mime="application/pdf"
     )
