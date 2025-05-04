@@ -1,4 +1,4 @@
-import streamlit as st
+eimport streamlit as st
 from datetime import datetime, time
 from fpdf import FPDF
 import io
@@ -174,7 +174,7 @@ with st.expander("🎛️ Gagen & Optionen", expanded=False):
 # — Fahrt & Anwesenheit —
 # ========================
 with st.expander("🚗 Fahrt & Anwesenheit", expanded=False):
-    no_sp = st.checkbox("Keine Spesen", value=True)
+    no_sp = st.checkbox("Keine Spesen verrechnen", value=True)
     fd    = st.slider("Fahrtzeit (Minuten)", 0, 300, step=5)
     sp    = 0 if no_sp else (500 if fd<=60 else 800 if fd<=120 else 1200)
     st.info(f"Spesen: {sp} CHF")
