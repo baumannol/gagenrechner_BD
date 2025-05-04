@@ -339,7 +339,7 @@ if st.button("PDF erzeugen"):
     pdf.cell(0, 6, f"Lichttechnik: {kosten_licht:.2f} CHF", ln=True)
     pdf.ln(3)
     pdf.set_font('Arial', 'B', 12)
-    pdf.cell(0, 8, f"Netto-Gewinn: {netto:.2f} CHF", ln=True)
+    pdf.cell(0, 8, f"Netto-Gewinn: {netto_gewinn:.2f} CHF", ln=True)
 
     # ── In-Memory-Stream & Download ──
     pdf_buffer = io.BytesIO()
